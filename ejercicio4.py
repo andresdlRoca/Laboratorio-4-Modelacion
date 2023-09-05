@@ -2,13 +2,27 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.stats import norm
 
-# Function for discrete distribution (Poisson)
-def poisson_sample(n, lamb):
-    return np.random.poisson(lamb, n)
+# Inverse Transform for Exponential distribution
+def inverse_transform_exponential(n, lamb):
+    u = np.random.uniform(0, 1, n)
+    x = -np.log(1 - u) / lamb
+    return x
 
-# Function for continuous distribution (Exponential)
-def exponential_sample(n, lamb):
-    return np.random.exponential(1/lamb, n)
+# Acceptance-Rejection for Poisson distribution
+def acceptance_rejection_poisson(n, lamb):
+    samples = []
+    for _ in range(n):
+        L = np.exp(-lamb)
+        k = 0
+        p = 1
+        while True:
+            k += 1
+            u = np.random.uniform(0, 1)
+            p *= u
+            if p <= L:
+                samples.append(k - 1)
+                break
+    return np.array(samples)
 
 def central_limit_theorem(sample_func, n_values, N_values, mu, sigma, title):
     for N in N_values:
@@ -46,11 +60,11 @@ sigma_poisson = np.sqrt(lamb_poisson)  # standard deviation
 n_values = [20, 40, 60, 80, 100]
 N_values = [50, 100, 1000, 10000]
 
-central_limit_theorem(poisson_sample, n_values, N_values, mu_poisson, sigma_poisson, 'Poisson Distribution')
+central_limit_theorem(acceptance_rejection_poisson, n_values, N_values, mu_poisson, sigma_poisson, 'Poisson Distribution via Acceptance-Rejection')
 
-# Continuous case: Exponential distribution with lambda = 2
-lamb_exp = 2
-mu_exp = 1 / lamb_exp  # mean
-sigma_exp = 1 / lamb_exp  # standard deviation
+# # Continuous case: Exponential distribution with lambda = 2
+# lamb_exp = 2
+# mu_exp = 1 / lamb_exp  # mean
+# sigma_exp = 1 / lamb_exp  # standard deviation
 
-central_limit_theorem(exponential_sample, n_values, N_values, mu_exp, sigma_exp, 'Exponential Distribution')
+# central_limit_theorem(inverse_transform_exponential, n_values, N_values, mu_exp, sigma_exp, 'Exponential Distribution via Inverse Transform')
