@@ -13,6 +13,6 @@ def integral_estimate(N):
     estimate = np.mean(f_values)
     return estimate
 
-N = 100000  # Number of samples
+N = 1000000  # Number of samples
 result = integral_estimate(N)
 print("Estimated value of the integral:", result)
